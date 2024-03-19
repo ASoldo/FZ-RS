@@ -1,0 +1,23 @@
+cargo-features = ["different-binary-name"]
+
+[package]
+name = "helldivers-2-flipperzero"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.78.0"
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+
+[[bin]]
+name = "helldivers-2-flipperzero"
+filename = "helldivers-2-flipperzero.fap"
+bench = false
+test = false
+
+[dependencies]
+flipperzero = { git = "https://github.com/flipperzero-rs/flipperzero", branch = "main" }
+flipperzero-sys = { git = "https://github.com/flipperzero-rs/flipperzero", branch = "main" }
+flipperzero-rt = { git = "https://github.com/flipperzero-rs/flipperzero", branch = "main" }
+flipperzero-alloc = { git = "https://github.com/flipperzero-rs/flipperzero", branch = "main" }

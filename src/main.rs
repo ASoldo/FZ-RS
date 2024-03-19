@@ -7,6 +7,10 @@ extern crate flipperzero_alloc;
 extern crate flipperzero_rt;
 
 use flipperzero_rt::{entry, manifest};
+use sys::{
+    Align_AlignCenter, GuiButtonType_GuiButtonTypeCenter, GuiButtonType_GuiButtonTypeLeft,
+    GuiButtonType_GuiButtonTypeRight,
+};
 
 use core::ffi::{c_char, c_void, CStr};
 use core::mem::{self, MaybeUninit};
@@ -67,7 +71,62 @@ pub unsafe extern "C" fn text_input_callback(context: *mut c_void) {
         sys::Font_FontPrimary,
         message.as_c_ptr(),
     );
+    sys::widget_add_string_element(
+        (*app).widget.as_ptr(),
+        10,
+        10,
+        sys::Align_AlignCenter,
+        sys::Align_AlignCenter,
+        sys::Font_FontPrimary,
+        FuriString::from("custom shit ").as_c_ptr(),
+    );
+
+    sys::widget_add_text_box_element(
+        (*app).widget.as_ptr(),
+        0,
+        0,
+        40,
+        10,
+        Align_AlignCenter,
+        Align_AlignCenter,
+        FuriString::from("Textovi").as_c_ptr(),
+        true,
+    );
+    sys::widget_add_frame_element((*app).widget.as_ptr(), 15, 15, 48, 32, 10);
+    sys::widget_add_icon_element(
+        (*app).widget.as_ptr(),
+        20,
+        40,
+        &TARGET_ICON as *const Icon as *const c_void as *const sys::Icon,
+    );
+    sys::widget_add_button_element(
+        (*app).widget.as_ptr(),
+        GuiButtonType_GuiButtonTypeCenter,
+        FuriString::from("Press Me").as_c_ptr(),
+        Some(button_callback),
+        context,
+    );
+    sys::widget_add_button_element(
+        (*app).widget.as_ptr(),
+        GuiButtonType_GuiButtonTypeLeft,
+        FuriString::from("Yes").as_c_ptr(),
+        Some(button_callback),
+        context,
+    );
+    sys::widget_add_button_element(
+        (*app).widget.as_ptr(),
+        GuiButtonType_GuiButtonTypeRight,
+        FuriString::from("No").as_c_ptr(),
+        Some(button_callback),
+        context,
+    );
     sys::view_dispatcher_switch_to_view((*app).view_dispatcher.as_ptr(), AppView::Widget as u32);
+}
+
+extern "C" fn button_callback(_button_type: u8, _button_action: u8, context: *mut c_void) {
+    // Implementation remains similar
+    let app = unsafe { &mut *(context as *mut App) };
+    // Handle the button press event
 }
 
 pub unsafe extern "C" fn navigation_event_callback(context: *mut c_void) -> bool {
@@ -122,7 +181,7 @@ struct Icon {
     frames: *const *const u8,
 }
 
-extern "C" fn app_draw_callback(canvas: *mut sys::Canvas, ctx: *mut c_void) {
+extern "C" fn app_draw_callback(canvas: *mut sys::Canvas, _ctx: *mut c_void) {
     unsafe {
         sys::canvas_clear(canvas);
         sys::canvas_draw_str(canvas, 30, 30, c"Hello Andrija".as_ptr());
